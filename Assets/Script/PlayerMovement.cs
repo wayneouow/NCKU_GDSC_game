@@ -32,7 +32,10 @@ public class PlayerMovement : MonoBehaviour
     public LayerMask Ground;
     bool grounded;
 
-
+    Animator animator;
+    //Animation State
+    bool run = false;
+    
     public Transform orientation;
     float horizontalInput;
     float verticalInput;
@@ -42,6 +45,7 @@ public class PlayerMovement : MonoBehaviour
 
     public enum MovementState
     {
+        idle,
         walking,
         sprinting,
         crouching,
@@ -56,6 +60,8 @@ public class PlayerMovement : MonoBehaviour
         readyToJump = true;
 
         startYScale = transform.localScale.y;
+
+        animator = GetComponent<Animator>();
 
     }
     private void FixedUpdate() 
@@ -77,6 +83,8 @@ public class PlayerMovement : MonoBehaviour
             rb.drag = groundDrag;
         else
             rb.drag = 0;
+
+        animatorSet();
     }
 
     private void UserInput()
@@ -104,24 +112,33 @@ public class PlayerMovement : MonoBehaviour
     }
     private void StateHandler()
     {
+        run = false;
         if(Input.GetKey(crouchKey))
         {
             state = MovementState.crouching;
             moveSpeed = crouchSpeed;
+            run = false;
         }
         else if(grounded && Input.GetKey(sprintKey))
         {
             state = MovementState.sprinting;
             moveSpeed = sprintSpeed;
+            run = true;
         }
-        else if(grounded)
+        else if(grounded && rb.velocity.magnitude <= 0.01)
+        {
+            state = MovementState.idle;
+        }
+        else if(grounded )
         {
             state = MovementState.walking;
             moveSpeed = walkSpeed;
+            run = false;
         }
         else
         {
             state = MovementState.air;
+            run = false;
         }
     }
 
@@ -152,5 +169,11 @@ public class PlayerMovement : MonoBehaviour
     private void JumpReset()
     {
         readyToJump = true;
+    }
+
+    private void animatorSet()
+    {
+        animator.SetBool("Run", run);
+        animator.SetInteger("movementSt", (int)state);
     }
 }
