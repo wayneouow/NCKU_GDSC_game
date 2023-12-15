@@ -32,16 +32,29 @@ public class PlayerMovement : MonoBehaviour
     public LayerMask Ground;
     bool grounded;
 
-    Animator animator;
-    //Animation State
-    bool run = false;
+    [Header("Attack")]
+    public GameObject atkZone;
+    public bool canAttack = true;
+    public float AttackCoolDown = 0.7f;
+    public bool isAttacking = false;
+    public int atk = 30;
     
+    [Header("Others")]
     public Transform orientation;
     float horizontalInput;
     float verticalInput;
     Vector3 moveDirection;
     Rigidbody rb;
+    public GameObject respawn;
 
+    public GameObject GroundSpawnParticle;
+    public GameObject NewGround;
+
+    Animator animator;
+    //Animation State
+    bool run = false;
+
+    public PlayerValue pv;
 
     public enum MovementState
     {
@@ -51,9 +64,11 @@ public class PlayerMovement : MonoBehaviour
         crouching,
         air
     }
+
     public MovementState state;
     void Start()
     {
+        
         rb = GetComponent<Rigidbody>();
         rb.freezeRotation = true;
 
@@ -85,6 +100,14 @@ public class PlayerMovement : MonoBehaviour
             rb.drag = 0;
 
         animatorSet();
+
+        if (transform.position.y < 0.001f)
+        {
+            transform.position = new Vector3(transform.position.x, 0.1f , transform.position.z);
+            Instantiate(NewGround, new Vector3(transform.position.x, 0f, transform.position.z), transform.rotation);
+            Instantiate(GroundSpawnParticle, new Vector3(transform.position.x, transform.position.y, transform.position.z), transform.rotation);
+        }
+        
     }
 
     private void UserInput()
@@ -107,6 +130,14 @@ public class PlayerMovement : MonoBehaviour
         if(Input.GetKeyUp(crouchKey))
         {
             transform.localScale = new Vector3(transform.localScale.x, startYScale, transform.localScale.z);
+        }
+
+        if (Input.GetMouseButtonDown(0) && canAttack)
+        {
+            isAttacking = true;
+            canAttack = false;
+            Attack();
+            Invoke(nameof(AttackReset), AttackCoolDown);
         }
 
     }
@@ -171,9 +202,32 @@ public class PlayerMovement : MonoBehaviour
         readyToJump = true;
     }
 
+    private void Attack()
+    {
+        animator.SetTrigger("Attack");
+
+        Invoke(nameof(AttackStop), 0.8f * AttackCoolDown);
+    }
+    public void Damage(EnemySystem es)
+    {
+        es.HP = (es.HP <= 0) ? 0 : es.HP - atk;
+        if (es.HP <= 0)
+        {
+            es.alive = false;
+        }
+    }
+    private void AttackReset()
+    {
+        canAttack = true;
+    }
+    private void AttackStop()
+    {
+        isAttacking = false;
+    }
     private void animatorSet()
     {
         animator.SetBool("Run", run);
         animator.SetInteger("movementSt", (int)state);
+
     }
 }
