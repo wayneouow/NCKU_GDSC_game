@@ -21,11 +21,13 @@ public class SpawnEnemy : MonoBehaviour
         if (canSpawn)
         {
             GameObject en = enemy[Random.Range(0, enemy.Count)];
+            en.GetComponent<AudioSource>().enabled = true;
             canSpawn = false;
             Instantiate(spawnBaseEffect, new Vector3(transform.position.x, transform.position.y, transform.position.z), transform.rotation);
             Vector3 pos = new Vector3(transform.position.x + Random.Range(-spawnRad, spawnRad), transform.position.y + 1f, transform.position.z + Random.Range(-spawnRad, spawnRad));
             Instantiate(spawnEnemyEffect, pos, transform.rotation);
             Instantiate(en, pos, transform.rotation);
+            GetComponent<AudioSource>().Play();
             Invoke(nameof(SpawnReset), SpawnCoolDown);
         }
     }

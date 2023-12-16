@@ -9,7 +9,7 @@ public class PlayerValue : MonoBehaviour
     public int MaxHP = 100;
     public bool alive = true;
     public GameObject gameOver;
-
+    public GameObject bgm;
     void Start()
     {
         Time.timeScale = 1;
@@ -27,6 +27,7 @@ public class PlayerValue : MonoBehaviour
         }
         if (!alive)
         {
+            bgm.GetComponent<AudioSource>().Pause();
             Time.timeScale = 0;
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;

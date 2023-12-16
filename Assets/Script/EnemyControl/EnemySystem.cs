@@ -31,6 +31,9 @@ public class EnemySystem : MonoBehaviour
     public int atk = 10;
     public GameObject atkParticle;
 
+    [Header("Sound")]
+    public AudioClip slimeSound;
+
     Rigidbody rb;
     Animator animator;
     private void Start()
@@ -98,6 +101,7 @@ public class EnemySystem : MonoBehaviour
             rb.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ;
             rb.constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionY | RigidbodyConstraints.FreezePositionZ;
             GetComponent<SphereCollider>().enabled = false;
+            GetComponent<AudioSource>().enabled = false;
             if (!dropped)
             {
                 dropped = true;
@@ -112,6 +116,7 @@ public class EnemySystem : MonoBehaviour
     private void Attack()
     {
         animator.SetTrigger("Attack");
+        GetComponent<AudioSource>()?.Play();
         Instantiate(atkParticle, new Vector3(transform.position.x, transform.position.y, transform.position.z), transform.rotation);
         player.GetComponent<PlayerValue>().HP -= atk;
     }

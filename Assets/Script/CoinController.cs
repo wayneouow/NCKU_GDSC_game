@@ -11,6 +11,7 @@ public class CoinController : MonoBehaviour
     public Material material;
     public int value;
     public GameObject pickParticle;
+    public AudioClip pickSound;
     [SerializeField] bool inRange;
     // Start is called before the first frame update
     void Start()
@@ -29,12 +30,16 @@ public class CoinController : MonoBehaviour
         else
             inRange = false;
 
-        if (distanceToPlayer.magnitude <= pickUpRange && Input.GetKeyDown(KeyCode.F)) PickUp();
+        if (distanceToPlayer.magnitude <= pickUpRange && Input.GetKeyDown(KeyCode.F))
+        {
+            PickUp();
+        } 
     }
     private void PickUp()
     {
         pv.money += value;
         inRange = false;
+        
         Instantiate(pickParticle, transform.position, transform.rotation);
         Destroy(gameObject);
     }

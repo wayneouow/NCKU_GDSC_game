@@ -14,6 +14,7 @@ public class CollisionDetection : MonoBehaviour
         {
             GetComponent<SphereCollider>().enabled = false;
             Debug.Log("hit " + other.name);
+            GetComponent<AudioSource>().Play();
             other.GetComponent<Animator>().SetTrigger("Hit");
             other.GetComponent<EnemySystem>().HP = other.GetComponent<EnemySystem>().HP <=0 ? 0 : other.GetComponent<EnemySystem>().HP - pm.atk;
             if(other.GetComponent<EnemySystem>().HP<=0)

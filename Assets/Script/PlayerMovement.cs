@@ -49,7 +49,8 @@ public class PlayerMovement : MonoBehaviour
 
     public GameObject GroundSpawnParticle;
     public GameObject NewGround;
-
+    public GameObject GamePause;
+    bool esc = false;
     Animator animator;
     //Animation State
     bool run = false;
@@ -139,6 +140,25 @@ public class PlayerMovement : MonoBehaviour
             Attack();
             Invoke(nameof(AttackReset), AttackCoolDown);
         }
+        if (Input.GetKey(KeyCode.Q))
+        {
+            esc = !esc;
+            if (esc)
+            {
+                Cursor.lockState = CursorLockMode.None;
+                Cursor.visible = true;
+                Time.timeScale = 0;
+                GamePause.gameObject.SetActive(esc);
+            }
+            else
+            {
+                Cursor.lockState = CursorLockMode.Locked;
+                Cursor.visible = false;
+                Time.timeScale = 1;
+                GamePause.gameObject.SetActive(esc);
+            }
+            
+        }
 
     }
     private void StateHandler()
@@ -171,6 +191,7 @@ public class PlayerMovement : MonoBehaviour
             state = MovementState.air;
             run = false;
         }
+
     }
 
     private void MovePlayer()
