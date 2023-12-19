@@ -18,6 +18,6 @@ public class Menu : MonoBehaviour
     public void OnQuitButton()
     { 
         Application.Quit();
-        EditorApplication.isPlaying= false;
+        //EditorApplication.isPlaying= false;
     }
 }
